@@ -1,0 +1,27 @@
+body{
+  background-color: #000;
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+}
+
+div[data-nextjs-scroll-focus-boundary] {
+  height: 100%;
+}
+
+/* 3 sutun var. Ortadaki 1440px max %94 kaplıyor. */
+/* 96 header içerik auto  72 footer*/
+.container {
+  display: grid;
+  grid-template-columns: 1fr min(1440px, 94%) 1fr;
+  grid-template-rows: 96px auto 72px;
+}
+
+/* container içindeki bütün ögeler 2. grid sütununda */
+.container > * {
+  grid-column: 2;
+}
+
+/* fluid classları bütün sutunu kaplar */
+.container > .fluid {
+  grid-column: 1 / -1;
+}
