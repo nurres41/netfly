@@ -1,25 +1,35 @@
 import React from 'react'
 import HomeContainer from '@/containers/home'
-import Movies from '@/mocks/movies.json'
+import {  getCategory, getPopularMovies, getTopRatedMovies, getSingleCategory } from '@/services/movie'
 
-async function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+
+// PAGES
 
 async function Pages({params}) {
-   await delay(6000);
+
   let selectedCategory;
- console.log(params);
+
+  const topRatedPromise = getTopRatedMovies();
+  const popularPromise = getPopularMovies();
+  const categoryPromise = getCategory();
+  
+  // obj döner. obje içindeki results dizisi bize lazım olan. burada getTopRatedMovies().results'u popularMovies'e atadık.
+
+  const [{results:topRatedMovies}, {results:popularMovies}, {genres: categories }] = await Promise.all([topRatedPromise,popularPromise,categoryPromise]);
+
+
   if(params.category?.length > 0 )
         {
-        selectedCategory = true
-         }
+        const {results} = await getSingleCategory(params.category[0])
+        selectedCategory = results
+        console.log(selectedCategory)
+        }
 
   return (
     // params.category varsa [0]. elemanı. Çünkü [0] elemanı /tan sonra gelen ilk parametredir. /12/sadsad params.category[0] = 12 olacaktır.
-    <HomeContainer selectedCategory={{
+    <HomeContainer popularMovies={popularMovies} topRatedMovies={topRatedMovies} categories={categories} selectedCategory={{
         id: params.category?.[0] ?? '',
-        movies: selectedCategory ? Movies.results.slice(7,13) : [],
+        movies: selectedCategory ? selectedCategory.slice(0,7) : [],
     }}/>
   )
 }
